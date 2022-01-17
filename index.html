@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Cancer Indicator Charts - Tom Lancaster</title>
-  <link rel="icon" type="image/x-icon" href="/cancer-ribbon.png">
+  <link rel="icon" type="image/x-icon" href="images/cancer-ribbon.png">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src='https://cdn.plot.ly/plotly-2.8.3.min.js'></script>
   <!-- <style>
@@ -14,23 +14,25 @@
 </head>
 <body>
     <div id="home"></div>
-    <h1>Cancer Indicator Charts</h1>
-    <ul id="objects"></ul>
-    <h2>Chart 1</h2>
     <div style="display:block;">
-        <select id="age">
-            <option>Choose age group</option>
-        </select>
-        <select id="ethnicity">
-            <option>Choose ethnicity</option>
-       </select>
+        <img src="images/cancer-ribbon.png" alt="Cancer Ribbon" style="width:7%;height:6%;">
+        <h1 style="display:inline;">Cancer Indicator Charts</h1>
     </div>
-    <div id="barChart"></div>
-    <h2>Chart 2</h2>
+
+    <ul id="objects"></ul>
+    <h2>1 - Mortality Rates across Race & Age Group</h2>
+    <p><i>* - per 1,000 patients</i></p>
+    <div style="display:block;">
+        <label for="ageGroup">Choose Age Group:</label>
+        <select id="c1drop1" onchange="chart1()">
+        </select>
+    </div>
     <div id="pieChart"></div>
-    <h2>Chart 3</h2>
-    <h2>Chart 4</h2>
-    <h2>Chart 5</h2>
+    <h2>2 - </h2>
+    <div id="barChart"></div>
+    <h2>3 - </h2>
+    <h2>4 - </h2>
+    <h2>5 - </h2>
 <script type='text/javascript' src='config.js'></script>
 <script src="js/charts.js"></script>
 </body>

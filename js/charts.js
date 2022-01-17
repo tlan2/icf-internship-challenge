@@ -1,5 +1,5 @@
 
-var mykey = config.MY_KEY;
+var appToken = config.MY_KEY;
 var secretkey = config.SECRET_KEY;
 var ajaxResult = [];
 var counts = [];
@@ -15,155 +15,73 @@ const cancerTypes =
 'Cancer of liver and intrahepatic bile duct', 'Cancer of other GI organs; peritoneum', 'Cancer of other female genital organs', 'Cancer of other male genital organs', 
 'Cancer of other urinary organs', 'Cancer of ovary', 'Cancer of pancreas', 'Cancer of prostate', 'Cancer of rectum and anus', 'Cancer of stomach', 'Cancer of testis', 
 'Cancer of thyroid', 'Cancer of uterus', 'Cancer; other and unspecified primary', 'Cancer; other respiratory and intrathoracic', 'Other non-epithelial cancer of skin'];
-const dischargeDisposition = 
+const discharge = 
 ['Another Type Not Listed', 'Cancer Center or Children\'s Hospital', 'Court/Law Enforcement', 'Critical Access Hospital', 
 'Expired', 'Facility w/ Custodial/Supportive Care', 'Federal Health Care Facility', 'Home or Self Care', 'Home w/ Home Health Services', 
 'Hosp Basd Medicare Approved Swing Bed', 'Hospice - Home', 'Hospice - Medical Facility', 'Inpatient Rehabilitation Facility', 'Left Against Medical Advice', 
 'Medicaid Cert Nursing Facility', 'Medicare Cert Long Term Care Hospital', 'Psychiatric Hospital or Unit of Hosp', 'Short-term Hospital', 'Skilled Nursing Home'];
-const ethnicities = ['Black/African American', 'Multi-ethnic', 'Multi-racial', 'Not Span/Hispanic', 'Other Race', 'Spanish/Hispanic', 'Unknown', 'White'];
+const ethnicities = ['Multi-ethnic', 'Not Span/Hispanic', 'Spanish/Hispanic', 'Unknown'];
+const race = ['Black/African American', 'Multi-racial', 'Other Race', 'White']
 
-var counts;
-// function getParameterVals(){
-//   $.ajax({
-//     url: "https://health.data.ny.gov/resource/gnzp-ekau.json?$where=UPPER(ccs_diagnosis_description) like '%25CANCER%25'",
-//     type: "GET",
-//     data: {
-//       "$limit" : DATA_LIMIT,
-//       "$$app_token" : mykey
-//     }
-//   }).done(function(cancerData) {
-//     //alert("Retrieved " + data.length + " records from the dataset!");
-//     console.log(cancerData.length);
-//     var raceSet = new Set();
-//     var ethnicitySet = new Set();
-//     cancerData.forEach(function (patient) {
-//       raceSet.add(patient.race);
-//       ethnicitySet.add(patient.ethnicity);
-//     });
-//     printVar("raceSet", Array.from(raceSet).sort().join(", "));
-//     printVar("ethnicitySet", Array.from(ethnicitySet).sort().join(", "));
-//   });
-// }
+//                            Ages: All Ages, 0-17, 18-29, 30-49,  50-69,  70+
+const africanAmericanVisitsByAge = [  8624,   100,   94,   1056,   4635,  2739];
+const multiRacialVisitsByAge =     [  581,     30,    6,     70,    260,   215];
+const otherRaceVisitsByAge =       [ 12610,   235,  282,   2021,   6289,  3783];
+const whiteVisitsByAge =           [ 36019,   422,  376,   3429,  17031, 14761];
 
+/**
+ * Creates Pie chart of Mortality Rates across Race
+ */
 
-function getDataCount(url){
-  var count = 0;
-  $(document).ready(function(){
-    $.ajax({
-      url: url,
-      async:true,
-      dataType: "json",
-      data: {
-        "$limit" : DATA_LIMIT,
-        "$$app_token" : mykey
-      }, 
-      success: function(data)
-       { 
-          console.log("data.length = " + data.length);
-          ajaxResult.push(data);
-       },
-       error: function() {
-        alert('Error occurred when retrieving data.')
-      }
-    });
-  });
-  // $(document).ready(function(){
-  // var data = $.parseJSON($.ajax({
-  //       url: url,
-  //       type: "GET",
-  //       data: {
-  //         "$limit" : DATA_LIMIT,
-  //         "$$app_token" : mykey
-  //       },
-  //       success: function(data) {
-  //         //alert("Retrieved " + data.length + " records from the dataset!");
-  //         console.log(data.length);
-  //         addCount(data.length);
-  //     }
-  //     // error: function() {
-  //     //   alert('Error occurred when retrieving data.')
-  //     // }
-  //   }).responseText);
-  //   console.log(Array.isArray(data));
-    
-  // });
+function chart1Wrapper(){
+  dropDownFromArray("c1drop1", ageGroups);
+  chart1();
 }
-
 
 function chart1(){
-    dropDownFromArray("age", ageGroups);
-    dropDownFromArray("ethnicity", ethnicities);
-}
-
-function chart2(){
-  var counts = []  
-  var url = baseUrl + dischargeQueryString("Expired");
+  var age = getDropDownValue("c1drop1");
+  console.log(age);
+  var ageUrl = ageGroupsQueryString(age);
+  var url = `https://health.data.ny.gov/resource/gnzp-ekau.json?$query=SELECT race, COUNT(patient_disposition) AS TOTAL_DEATHS WHERE%20UPPER(ccs_diagnosis_description)%20like%20%27%25CANCER%25%27 AND patient_disposition in('Expired', 'Hospice - Home', 'Hospice - Medical Facility') ${ageUrl} GROUP BY race`;
   console.log(url);
-  getDataCount(url);
-  console.log(Array.isArray(ajaxResult));
-  console.log(Object.keys(ajaxResult).length);
-  //console.log(count);
-  //counts.push();
-  // for (var i = 0; i < ethnicities.length; i++){
-  //     var eth = ethnicities[i];
-  // }
+    $.ajax({
+      url: url,
+      type: "GET",
+      contentType: "application/json; charset=utf-8", // this
+      dataType: "json", // and this
+      data: {
+        "$$app_token" : appToken
+      }
+  }).done(function(data) {
+    // alert("Retrieved " + data.length + " records from the dataset!");
+    // console.log(data.length);
+    console.log(data);
+    var results = [];
 
-  
-  var data = [{
-    values: [19, 26, 55],
-    labels: ethnicities,
-    type: 'pie'
-  }];
-  
-  var layout = {
-    height: 400,
-    width: 500
-  };
-  
-  Plotly.newPlot('pieChart', data, layout);
+    var raceTotalVisitsMap = new Map();
+    for(var i=0; i < africanAmericanVisitsByAge.length; i++){
+      raceTotalVisitsMap.set('Black/African American_' + ageGroups[i], africanAmericanVisitsByAge[i]);
+      raceTotalVisitsMap.set('Multi-racial_' + ageGroups[i], multiRacialVisitsByAge[i]);
+      raceTotalVisitsMap.set('Other Race_' + ageGroups[i], otherRaceVisitsByAge[i]);
+      raceTotalVisitsMap.set('White_' + ageGroups[i], whiteVisitsByAge[i]);
+    }
+
+    for(var i=0; i < data.length; i++){
+      console.log(data[i]);
+      var key = data[i].race + "_" + age;
+      console.log("key = " + key);
+      console.log(raceTotalVisitsMap.get(key));
+      var mortalityRate = calculateMortalityRate(data[i].TOTAL_DEATHS, raceTotalVisitsMap.get(key));
+      console.log(mortalityRate)
+      results.push(mortalityRate);
+    }
+
+    createPieChart("pieChart", results, race);
+  });
 }
 
-// function chart3(){
-  
-// }
-
-// function chart4(){
-  
-// }
-
-// function chart5(){
-  
-// }
-
-function addCount(val){
-  counts.push(val);
-}
-
-function ageGroupsQueryString(value){
-  let string = value.toLowerCase() == "all ages" ? "" : "&age_group=" + value;
-  return string;
-}
-
-function cancerTypesQueryString(value){
-  let string = value.toLowerCase() == "all cancer types" ? "" : "&ccs_diagnosis_description=" + value;
-  return string;
-}
-
-function dischargeQueryString(value){
-  let string = value.toLowerCase() != "expired" ? "" : "&patient_disposition=" + value;
-  return string;
-}
-
-function ethnicitiesQueryString(value){
-  value = value.toLowerCase();
-  if(value == 'all ethnicities') { return ""; }
-  else if(value == 'multi-ethnic' || value == 'not span/hispanic' || value == 'spanish/hispanic' || value == 'unknown'){
-    console.log(value + " is in ethnicity field");
-    return "&ethnicity=" + value;
-  } else {
-    console.log(value + " is in race field");
-    return "&race=" + value;
-  }
+function getDropDownValue(id) {
+  return document.getElementById(id).value;
 }
 
 function dropDownFromArray(id, arr){
@@ -178,14 +96,57 @@ function dropDownFromArray(id, arr){
   }
 }
 
-function printVar(name, value){
-  console.log(name + " = " + value);
+function createPieChart(id, values, labels){
+    var data = [{
+      values: values,
+      labels: labels,
+      type: 'pie',
+      textinfo: 'value'
+    }];
+    
+    var layout = {
+      height: 400,
+      width: 500
+    };
+
+  Plotly.newPlot(id, data, layout);
+}
+
+function ageGroupsQueryString(value){
+  let string = value.toLowerCase() == "all ages" ? "" : "AND age_group='" + value + "'";
+  return string;
+}
+
+function cancerTypesQueryString(value){
+  let string = value.toLowerCase() == "all cancer types" ? "" : "&ccs_diagnosis_description=" + value;
+  return string;
+}
+
+function dischargeQueryString(value){
+  let string = value.toLowerCase() != "expired" ? "" : "&patient_disposition=" + value;
+  return string;
+}
+
+function raceQueryString(value){
+  let string = value.toLowerCase() == 'allethnicities' ? "" : "&race=" + value;
+  return string
+}
+
+function createRaceTotalVisitsMap(){
+  
+  console.log(raceTotalVisitsMap);
+  return raceTotalVisitsMap;
+}
+
+function calculateMortalityRate(totalDeaths, totalPatients){
+  var num = (1000 * totalDeaths) / totalPatients;
+  return num.toFixed(2);
 }
 
 //getDataCount(baseUrl);
 //getParameterVals();
-chart1();
-chart2();
+chart1Wrapper();
+// chart2();
 // chart3();
 // chart4();
 // chart5();
