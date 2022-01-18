@@ -1,16 +1,16 @@
+<!-- 
+    Tom Lancaster (c) 2022
+    index.html
+-->
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Cancer Indicator Charts - Tom Lancaster</title>
+  <title>Charts - Tom Lancaster</title>
   <link rel="icon" type="image/x-icon" href="images/cancer-ribbon.png">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src='https://cdn.plot.ly/plotly-2.8.3.min.js'></script>
-  <!-- <style>
-    body {
-      background-image: url('http://med.stanford.edu/content/dam/sm-news/images/2021/03/lung-cancer-cells1.jpg');
-    }
-    </style> -->
 </head>
 <body>
     <div id="home"></div>
@@ -18,22 +18,24 @@
         <img src="images/cancer-ribbon.png" alt="Cancer Ribbon" style="width:7%;height:6%;">
         <h1 style="display:inline;">Cancer Indicator Charts</h1>
     </div>
-
-    <ul id="objects"></ul>
-    <h2>1 - Mortality Rates across Race & Age Group</h2>
-    <p><i>* - per 1,000 patients</i></p>
-    <div style="display:block;">
-        <label for="ageGroup">Choose Age Group:</label>
-        <select id="c1drop1" onchange="chart1()">
-        </select>
-    </div>
-    <div id="pieChart"></div>
-    <h2>2 - </h2>
-    <div id="barChart"></div>
+    <h2>1 - Cancer Mortality Rates across Race & Age Group</h2>
+        <div style="display:block;">
+            <label for="ageGroup">Choose Age Group:</label>
+            <select id="c1drop1" onchange="chart1()">
+            </select>
+        </div>
+        <div id="pieChart"></div>
+    <h2>2 - Age-Cancer Type Correlation </h2>
+        <div style="display:block;">
+            <label for="cancerType">Choose Cancer Type:</label>
+            <select id="c2drop1" onchange="chart2()">
+            </select>
+        </div>
+        <div id="barChart"></div>
     <h2>3 - </h2>
     <h2>4 - </h2>
     <h2>5 - </h2>
-<script type='text/javascript' src='config.js'></script>
-<script src="js/charts.js"></script>
+    <script type='text/javascript' src='config.js'></script>
+    <script src="js/charts.js"></script>
 </body>
 </html>
