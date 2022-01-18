@@ -20,8 +20,6 @@ Charts Images
 <br>
 <br>
 <br>
-<br>
-<br>
 
 # Tools
 <ol>
