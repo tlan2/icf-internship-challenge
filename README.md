@@ -1,12 +1,14 @@
 # Cancer Indicator Charts - January 2022
 
-Charts Images
-
-
 # Website Link
 **[website link](https://www.markdownguide.org/basic-syntax/)**
 
+# Example Charts
+![chart1](./images/twentiesChart1.png)
+![chart2](./images/allAgesChart2.png)
+![chart3](./images/cancerGenderRace.png)
 # Author
+<br>
 <img align="left" width="200" height="200" src="images/me.JPG"> 
 <p align="center"> Learn More: <p>
 <div align="center">

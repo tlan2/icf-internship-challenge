@@ -198,7 +198,7 @@ function createDualBarChart(id, xLabels, y1Vals, y2Vals){
     var layout = { 
       title: "Total Cancer Diagnoses by Gender and Race",
       height: 400,
-      width: 600 
+      width: 750 
     };
     Plotly.newPlot(id, data, layout);
 }
