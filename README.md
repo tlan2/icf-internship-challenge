@@ -1,7 +1,7 @@
 # Cancer Indicator Charts - January 2022
 
 # Website Link
-**[website link](https://www.markdownguide.org/basic-syntax/)**
+**[https://lancaster-cancer-charts.herokuapp.com/](https://lancaster-cancer-charts.herokuapp.com/)**
 
 # Example Charts
 ![chart1](./images/twentiesChart1.png)
