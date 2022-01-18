@@ -7,7 +7,7 @@ Charts Images
 **[website link](https://www.markdownguide.org/basic-syntax/)**
 
 # Author
-<img align="left" width="100" height="100" src="images/me.JPG"> 
+<img align="left" width="200" height="200" src="images/me.JPG"> 
 <p align="center"> Learn More: <p>
 <div align="center">
 <a href="https://tlan2.github.io/portfolio/" target="_blank">Portfolio</a>
@@ -16,6 +16,11 @@ Charts Images
 <br>
 <a href="https://github.com/tlan2" target="_blank">GitHub</a>
 </div>
+<br>
+<br>
+<br>
+<br>
+<br>
 <br>
 
 # Tools
