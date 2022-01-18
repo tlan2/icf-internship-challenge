@@ -31,6 +31,12 @@ const multiRacialVisitsByAge =     [  581,     30,    6,     70,    260,   215];
 const otherRaceVisitsByAge =       [ 12610,   235,  282,   2021,   6289,  3783];
 const whiteVisitsByAge =           [ 36019,   422,  376,   3429,  17031, 14761];
 
+/** Call Chart Functions */
+chart1Wrapper();
+chart2Wrapper();
+chart3();
+
+
 /**
  * Creates Pie chart of Mortality Rates across Race
  */
@@ -104,50 +110,97 @@ function chart2(){
   });
 }
 
-chart1Wrapper();
-chart2Wrapper();
-// chart3();
-// chart4();
-// chart5();
+function chart3(){
+  console.log("=== Chart 3 Activity ===");
+  var url = "https://health.data.ny.gov/resource/gnzp-ekau.json?$query=SELECT gender, race, count(ccs_diagnosis_description) as cancer_diagnoses WHERE%20UPPER(ccs_diagnosis_description)%20like%20%27%25CANCER%25%27 GROUP BY gender, race"
+  console.log(url);
+    $.ajax({
+      url: url,
+      type: "GET",
+      data: {
+        "$$app_token" : appToken
+      }
+  }).done(function(data) {
+    console.log(data);
+    var m = [];
+    var f = []
+    
+    for(var i=0; i < data.length; i++){
+      if(data[i].gender == "F"){
+        f.push(data[i].cancer_diagnoses);
+      } else { m.push(data[i].cancer_diagnoses); }
+    }
+
+    createDualBarChart("dualBar", race, f, m);
+  });
+}
 
 /** Chart Helper Methods */
 
 function createPieChart(id, values, labels, title){
-  var data = [{
-    values: values,
-    labels: labels,
-    type: 'pie',
-    textinfo: 'value'
-  }];
+    var data = [{
+      values: values,
+      labels: labels,
+      type: 'pie',
+      textinfo: 'value'
+    }];
+
+    var layout = {
+      title: `${title} - # of deaths per 1000 cancer patients by race`,
+      height: 400,
+      width: 500
+    };
+
+  Plotly.newPlot(id, data, layout);
+}
+
+function createBarChart(id, values, labels, title){
+  var data = [
+    {
+      x: labels,
+      y: values,
+      marker:{
+        color: ['rgba(29,152,106,1)', 'rgba(255,192,203,1)', 'rgba(50,42,89,1)', 'rgba(241,191,1,1)', 'rgba(234,89,42,1)']
+      },
+      type: 'bar'
+    }
+  ];
 
   var layout = {
-    title: `${title} - # of deaths per 1000 cancer patients by race`,
+    title: `${title}`,
     height: 400,
     width: 500
   };
 
-Plotly.newPlot(id, data, layout);
+  Plotly.newPlot(id, data, layout);
 }
 
-function createBarChart(id, values, labels, title){
-var data = [
-  {
-    x: labels,
-    y: values,
-    marker:{
-      color: ['rgba(29,152,106,1)', 'rgba(255,192,203,1)', 'rgba(50,42,89,1)', 'rgba(241,191,1,1)', 'rgba(234,89,42,1)']
-    },
-    type: 'bar'
-  }
-];
-
-var layout = {
-  title: `${title}`,
-  height: 400,
-  width: 500
-};
-
-Plotly.newPlot(id, data, layout);
+function createDualBarChart(id, xLabels, y1Vals, y2Vals){
+    var trace1 = {
+      x: xLabels,
+      y: y1Vals,
+      marker: {
+        color: ['rgba(255,192,203,1)', 'rgba(255,192,203,1)', 'rgba(255,192,203,1)', 'rgba(255,192,203,1)']
+      },
+      type: "bar",
+      name: "Female"
+    };
+    var trace2 = {
+      x: xLabels,
+      y: y2Vals,
+      marker: {
+        color: ['rgba(46,98,182,1)', 'rgba(46,98,182,1)', 'rgba(46,98,182,1)', 'rgba(46,98,182,1)']
+      },
+      type: "bar",
+      name: "Male"
+    };
+    var data = [trace1, trace2];
+    var layout = { 
+      title: "Total Cancer Diagnoses by Gender and Race",
+      height: 400,
+      width: 600 
+    };
+    Plotly.newPlot(id, data, layout);
 }
 
 function dropDownFromArray(id, arr){
@@ -166,12 +219,6 @@ function getDropDownValue(id) {
 return document.getElementById(id).value;
 }
 
-function createRaceTotalVisitsMap(){
-
-  console.log(raceTotalVisitsMap);
-  return raceTotalVisitsMap;
-}
-
 function calculateMortalityRate(totalDeaths, totalPatients){
   var num = (1000 * totalDeaths) / totalPatients;
   return num.toFixed(2);
@@ -188,17 +235,3 @@ function cancerTypesQueryString(value){
   let string = value.toLowerCase() == "all cancer types" ? "%20UPPER(ccs_diagnosis_description)%20like%20%27%25CANCER%25%27" : "ccs_diagnosis_description='" + value + "'";
   return string;
 }
-
-// function dischargeQueryString(value){
-//   let string = value.toLowerCase() != "expired" ? "" : "&patient_disposition=" + value;
-//   return string;
-// }
-
-// function raceQueryString(value){
-//   let string = value.toLowerCase() == 'allethnicities' ? "" : "&race=" + value;
-//   return string
-// }
-
-
-
-

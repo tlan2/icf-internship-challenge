@@ -10,9 +10,14 @@ Charts Images
 <img align="left" width="200" height="200" src="images/me.JPG"> 
 <p align="center"> Learn More: <p>
 <div align="center">
+<a href="https://github.com/tlan2/icf-internship-challenge/blob/main/resume_thomaslancaster.pdf" target="_blank">Resume</a>
+<br>
+<br>
 <a href="https://tlan2.github.io/portfolio/" target="_blank">Portfolio</a>
 <br>
+<br>
 <a href="https://www.linkedin.com/in/thomasmorelancaster/" target="_blank">LinkedIn</a>
+<br>
 <br>
 <a href="https://github.com/tlan2" target="_blank">GitHub</a>
 </div>

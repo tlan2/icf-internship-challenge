@@ -18,21 +18,22 @@
         <img src="images/cancer-ribbon.png" alt="Cancer Ribbon" style="width:7%;height:6%;">
         <h1 style="display:inline;">Cancer Indicator Charts</h1>
     </div>
-    <h2>1 - Cancer Mortality Rates across Race & Age Group</h2>
+    <h2>1 - Cancer Mortality Rates across Race & Age Group (Pie Chart)</h2>
         <div style="display:block;">
             <label for="ageGroup">Choose Age Group:</label>
             <select id="c1drop1" onchange="chart1()">
             </select>
         </div>
         <div id="pieChart"></div>
-    <h2>2 - Age-Cancer Type Correlation </h2>
+    <h2>2. Age-Cancer Type Correlation (Bar Chart)</h2>
         <div style="display:block;">
             <label for="cancerType">Choose Cancer Type:</label>
             <select id="c2drop1" onchange="chart2()">
             </select>
         </div>
         <div id="barChart"></div>
-    <h2>3 - </h2>
+    <h2>3. Total Cancer Diagnoses by Gender and Race (Grouped Bar Chart)</h2>
+        <div id="dualBar"></div>
     <script type='text/javascript' src='config.js'></script>
     <script src="js/charts.js"></script>
 </body>
