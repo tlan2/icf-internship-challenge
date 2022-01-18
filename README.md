@@ -19,9 +19,6 @@
 <br>
 <br>
 <a href="https://www.linkedin.com/in/thomasmorelancaster/" target="_blank">LinkedIn</a>
-<br>
-<br>
-<a href="https://github.com/tlan2" target="_blank">GitHub</a>
 </div>
 <br>
 <br>
