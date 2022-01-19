@@ -12,7 +12,6 @@
 <br>
 <img align="left" width="200" height="200" src="images/me.JPG"> 
 <h3 align="center">Tom Lancaster</h3>
-<br>
 <p align="center"> Learn More: <p>
 <div align="center">
 <a href="https://github.com/tlan2/icf-internship-challenge/blob/main/resume_thomaslancaster.pdf" target="_blank">Resume</a>
