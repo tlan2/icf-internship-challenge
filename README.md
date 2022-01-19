@@ -9,7 +9,6 @@
 ![chart3](./images/cancerGenderRace.png)
 ![chart4](./images/twoCancerTypes.png)
 # Author
-<br>
 <img align="left" width="200" height="200" src="images/me.JPG"> 
 <h3 align="center">Tom Lancaster</h3>
 <p align="center"> Learn More: <p>
