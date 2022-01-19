@@ -7,6 +7,7 @@
 ![chart1](./images/twentiesChart1.png)
 ![chart2](./images/allAgesChart2.png)
 ![chart3](./images/cancerGenderRace.png)
+![chart4](./images/twoCancerTypes.png)
 # Author
 <br>
 <img align="left" width="200" height="200" src="images/me.JPG"> 

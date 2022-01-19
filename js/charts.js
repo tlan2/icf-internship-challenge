@@ -1,12 +1,16 @@
 // Tom Lancaster (c) 2022
 // charts.js
 
+// App Token Key and secret key pulled from config.js file.
+// This could be used to hide keys moving forward. 
+// Not done in this case for the sake of this exercise.
 var appToken = config.MY_KEY;
 var secretkey = config.SECRET_KEY;
 var ajaxResult = [];
 var counts = [];
 
-const DATA_LIMIT = 57834; // Max # of records that contained "cancer" in description
+// Max # of records that contained "cancer" in description
+const DATA_LIMIT = 57834; 
 
 // Hard-Coded for the purposes of time.
 const ageGroups = ['All Ages', '0 to 17', '18 to 29', '30 to 49', '50 to 69', '70 or Older'];
@@ -35,16 +39,22 @@ const whiteVisitsByAge =           [ 36019,   422,  376,   3429,  17031, 14761];
 chart1Wrapper();
 chart2Wrapper();
 chart3();
+chart4Wrapper();
 
 
 /**
- * Creates Pie chart of Mortality Rates across Race
+ * Creates drop down for pie chart and calls pie chart method.
+ * Separates the static drop down menu and dynamic pie chart call.
  */
 function chart1Wrapper(){
   dropDownFromArray("c1drop1", ageGroups);
   chart1();
 }
 
+/**
+ * Makes API Call and creates pie chart for 
+ * cancer mortality rates across race and age.
+ */
 function chart1(){
   console.log("=== Chart 1 Activity ===");
   var age = getDropDownValue("c1drop1");
@@ -80,11 +90,18 @@ function chart1(){
   });
 }
 
+/**
+ * Makes drop down for bar chart and calls bar chart method.
+ * Separates the static drop down menu and dynamic bar chart call.
+ */
 function chart2Wrapper(){
   dropDownFromArray("c2drop1", cancerTypes);
   chart2();
 }
 
+/**
+ * Calls API call and populates bar chart for age-cancer type correlations.
+ */
 function chart2(){
   console.log("=== Chart 2 Activity ===");
   var cType = getDropDownValue("c2drop1");
@@ -110,6 +127,9 @@ function chart2(){
   });
 }
 
+/**
+ * Makes API call and creates chart for total cancer diagnoses across gender and race
+ */
 function chart3(){
   console.log("=== Chart 3 Activity ===");
   var url = "https://health.data.ny.gov/resource/gnzp-ekau.json?$query=SELECT gender, race, count(ccs_diagnosis_description) as cancer_diagnoses WHERE%20UPPER(ccs_diagnosis_description)%20like%20%27%25CANCER%25%27 GROUP BY gender, race"
@@ -135,8 +155,73 @@ function chart3(){
   });
 }
 
+/**
+ * Makes drop down for line graph chart and calls line graph chart method.
+ * Separates the static drop down menu and dynamic line graph chart call.
+ */
+function chart4Wrapper(){
+  dropDownFromArray("c4drop1", cancerTypes.slice(1));
+  dropDownFromArray("c4drop2", cancerTypes.slice(1), 1);
+  chart4();
+}
+
+/**
+ * Creates line graph based on the selected drop down values.
+ * Compares 2 cancer types
+ */
+function chart4(){
+  console.log("=== Chart 4 Activity ===");
+  var cType1 = getDropDownValue("c4drop1");
+  console.log(cType1);
+  var cType1String = cancerTypesQueryString(cType1);
+  var cType2 = getDropDownValue("c4drop2");
+  console.log(cType2);
+  var cType2String = cancerTypesQueryString(cType2);
+  var url = `https://health.data.ny.gov/resource/gnzp-ekau.json?$query=SELECT age_group, ccs_diagnosis_description, count(ccs_diagnosis_description) as count WHERE (${cType1String} OR ${cType2String}) GROUP BY age_group, ccs_diagnosis_description ORDER BY ccs_diagnosis_description, age_group`
+  console.log(url);
+    $.ajax({
+      url: url,
+      type: "GET",
+      data: {
+        "$$app_token" : appToken
+      }
+  }).done(function(data) {
+    console.log(data);
+    var c1x = [];
+    var c2x = [];
+    var c1y = [];
+    var c2y = [];
+
+    var xAges = createAgeValsMap();
+    
+    for(var i=0; i < data.length; i++){
+      var xVal = data[i].age_group;
+      var yVal = data[i].count;
+
+      if(data[i].ccs_diagnosis_description.toLowerCase() === cType1.toLowerCase()){
+        c1x.push(xAges.get(xVal));
+        c1y.push(yVal);
+      } else { 
+        c2x.push(xAges.get(xVal));
+        c2y.push(yVal); 
+      }
+    }
+
+    createLineGraph("lineGraph", c1x, c1y, c2x, c2y, cType1, cType2, "Total Cancer Diagnoses");
+  });
+}
+
 /** Chart Helper Methods */
 
+/**
+ * Creates pie chart found chart 1 for
+ * cancer mortality rates across race and age.
+ * 
+ * @param {string} id
+ * @param {TYPE} values 
+ * @param {!Array<Type>} labels 
+ * @param {string} title 
+ */
 function createPieChart(id, values, labels, title){
     var data = [{
       values: values,
@@ -154,6 +239,14 @@ function createPieChart(id, values, labels, title){
   Plotly.newPlot(id, data, layout);
 }
 
+/**
+ * Creates bar chart for age-cancer type correlations
+ * 
+ * @param {string} id 
+ * @param {TYPE} values 
+ * @param {!ARRAY<string>} labels 
+ * @param {string} title 
+ */
 function createBarChart(id, values, labels, title){
   var data = [
     {
@@ -175,6 +268,15 @@ function createBarChart(id, values, labels, title){
   Plotly.newPlot(id, data, layout);
 }
 
+/**
+ * Creates grouped bar chart for 
+ * total cancer diagnoses across gender and race
+ * 
+ * @param {string} id 
+ * @param {!Array<string>}} xLabels 
+ * @param {TYPE} y1Vals 
+ * @param {TYPE} y2Vals 
+ */
 function createDualBarChart(id, xLabels, y1Vals, y2Vals){
     var trace1 = {
       x: xLabels,
@@ -203,34 +305,129 @@ function createDualBarChart(id, xLabels, y1Vals, y2Vals){
     Plotly.newPlot(id, data, layout);
 }
 
-function dropDownFromArray(id, arr){
+/**
+ * Returns line graph for Comparing 2 Cancer Types in chart 4.
+ * 
+ * @param {string} id 
+ * @param {!Array<Integer>} x1Vals 
+ * @param {!Array<Integer>} y1Vals 
+ * @param {!Array<Integer>} x2Vals 
+ * @param {!Array<Integer>} y2Vals 
+ * @param {string} c1Name 
+ * @param {string} c2Name 
+ * @param {string} title 
+ */
+function createLineGraph(id, x1Vals, y1Vals, x2Vals, y2Vals, c1Name, c2Name, title){
+  var trace1 = {
+    x: x1Vals,
+    y: y1Vals,
+    name: c1Name,
+    mode: 'lines+markers',
+    type: 'scatter'
+  };
+  
+  var trace2 = {
+    x: x2Vals,
+    y: y2Vals,
+    name: c2Name,
+    mode: 'lines+markers',
+    type: 'scatter'
+  };
+  
+  var data = [trace1, trace2];
+
+  var layout = {
+    title: `<b>${title} </b>`,
+    height: 550,
+    width: 950,
+    font: {
+      size: 11
+    },
+    xaxis: {
+      title: {
+        text: '<b>Age</b>',
+      }
+    }
+  };
+  
+  Plotly.newPlot(id, data, layout);
+}
+
+/**
+ * Calculates the mortality rate using the deaths and total patient visits.
+ * Use fractions conversions to get the correct value for each category.
+ *
+ * @param {!Array<Integer>} totalDeaths 
+ * @param {!Array<Integer>} totalPatients 
+ * @returns {Float}
+ */
+ function calculateMortalityRate(totalDeaths, totalPatients){
+  var num = (1000 * totalDeaths) / totalPatients;
+  return num.toFixed(2);
+}
+
+/**
+ * Creates a hash map for age x values found chart 4.
+ * @returns {Map}
+ */
+function createAgeValsMap(){
+  var ageMap = new Map();
+  ageMap.set('0 to 17', 9);
+  ageMap.set('18 to 29', 24);
+  ageMap.set('30 to 49', 40);
+  ageMap.set('50 to 69', 60);
+  ageMap.set('70 or Older', 80);
+  return ageMap;
+}
+
+/**
+ * Populates the drop down list at the specific id
+ * 
+ * @param {string} id 
+ * @param {!Array<string>} arr 
+ * @param {Integer} selected
+ */
+function dropDownFromArray(id, arr, selected = 0){
     var select = document.getElementById(id);
 
     for(var i = 0; i < arr.length; i++){
       var option = arr[i];
       var element = document.createElement("option");
+      if(i == selected) { element.selected = true; }
       element.textContent = option;
       element.value = option;
       select.appendChild(element);
     }
   }
 
+/**
+ * Returns the drop down list value
+ * 
+ * @param {string} id 
+ * @returns {string}
+ */
 function getDropDownValue(id) {
-return document.getElementById(id).value;
-}
-
-function calculateMortalityRate(totalDeaths, totalPatients){
-  var num = (1000 * totalDeaths) / totalPatients;
-  return num.toFixed(2);
+  return document.getElementById(id).value;
 }
 
 /** Query Helper Methods */
 
+/**
+ * Returns valid URL query string to retrieve data based on age value.
+ * 
+ * @param {string} value 
+ * @returns {string}
+ */
 function ageGroupsQueryString(value){
   let string = value.toLowerCase() == "all ages" ? "" : "AND age_group='" + value + "'";
   return string;
 }
 
+/**
+ * Returns valid URL query string to retrieve data based on cancer type value.
+ * @param {*} value 
+ * @returns 
+ */
 function cancerTypesQueryString(value){
   let string = value.toLowerCase() == "all cancer types" ? "%20UPPER(ccs_diagnosis_description)%20like%20%27%25CANCER%25%27" : "ccs_diagnosis_description='" + value + "'";
   return string;

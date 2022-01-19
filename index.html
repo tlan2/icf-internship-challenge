@@ -7,7 +7,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Charts - Tom Lancaster</title>
+  <title>Cancer Charts - Tom Lancaster</title>
   <link rel="icon" type="image/x-icon" href="images/cancer-ribbon.png">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src='https://cdn.plot.ly/plotly-2.8.3.min.js'></script>
@@ -18,7 +18,7 @@
         <img src="images/cancer-ribbon.png" alt="Cancer Ribbon" style="width:7%;height:6%;">
         <h1 style="display:inline;">Cancer Indicator Charts</h1>
     </div>
-    <h2>1 - Cancer Mortality Rates across Race & Age Group (Pie Chart)</h2>
+    <h2>1 - Cancer Mortality Rates Across Race & Age (Pie Chart)</h2>
         <div style="display:block;">
             <label for="ageGroup">Choose Age Group:</label>
             <select id="c1drop1" onchange="chart1()">
@@ -32,8 +32,18 @@
             </select>
         </div>
         <div id="barChart"></div>
-    <h2>3. Total Cancer Diagnoses by Gender and Race (Grouped Bar Chart)</h2>
+    <h2>3. Total Cancer Diagnoses Across Gender and Race (Grouped Bar Chart)</h2>
         <div id="dualBar"></div>
+    <h2>4. Compare 2 Cancer Types Counts Across Age Group</h2>
+    <div style="display:block;">
+        <label for="cancerType">Choose 1st Cancer Type:</label>
+        <select id="c4drop1" onchange="chart4()"></select> 
+        &nbsp;
+        <label for="cancerType">Choose 2nd Cancer Type:</label>
+        <select id="c4drop2" onchange="chart4()">
+        </select>
+    </div>
+    <div id="lineGraph"></div>
     <script type='text/javascript' src='config.js'></script>
     <script src="js/charts.js"></script>
 </body>
