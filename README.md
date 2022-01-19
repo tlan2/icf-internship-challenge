@@ -22,7 +22,6 @@
 <a href="https://www.linkedin.com/in/thomasmorelancaster/" target="_blank">LinkedIn</a>
 </div>
 <br>
-<br>
 
 # Tools
 <ol>
